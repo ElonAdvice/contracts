@@ -43,7 +43,7 @@ const argv = require('yargs/yargs')()
     },
     privateKey: {
       type: "string",
-      default: "b55c9fcc2c60993e5c539f37ffd27d2058e7f77014823b461323db5eba817518" // random account
+      default: process.env.PRIVATE_KEY 
     },
     bscForkBlock: {
       type: "number",
@@ -99,9 +99,9 @@ export default {
       // gasPrice: 100_000_000_000,
       accounts: [argv.privateKey],
     },
-    fuji: {
-      url: argv.fujiRpcUrl || '',
-      chainId: 43113,
+    goerli: {
+      url: 'https://eth-goerli.public.blastapi.io',
+      chainId: 5,
       // gas: 50_000_000_000,
       accounts: [argv.privateKey],
     },

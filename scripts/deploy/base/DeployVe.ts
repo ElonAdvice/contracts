@@ -5,7 +5,7 @@ import {Misc} from "../../Misc";
 import {writeFileSync} from "fs";
 import {formatUnits, parseUnits} from "ethers/lib/utils";
 import {BscAddresses} from '../../addresses/BscAddresses';
-import {ConeMinter__factory, ConeVoter__factory, IERC20__factory} from "../../../typechain";
+import {XenoMinter__factory, XenoVoter__factory, IERC20__factory} from "../../../typechain";
 import {SignerWithAddress} from "@nomiclabs/hardhat-ethers/signers";
 import {TimeUtils} from "../../../test/TimeUtils";
 
@@ -70,10 +70,10 @@ async function main() {
     gaugesFactory,
     bribesFactory,
     ve,
-    veDist,
+    veXeno,
     voter,
     minter,
-  ] = await Deploy.deployConeSystem(
+  ] = await Deploy.deployXenoSystem(
     signer,
     voterTokens,
     claimants,
@@ -89,14 +89,14 @@ async function main() {
     + 'gaugesFactory: ' + gaugesFactory.address + '\n'
     + 'bribesFactory: ' + bribesFactory.address + '\n'
     + 've: ' + ve.address + '\n'
-    + 'veDist: ' + veDist.address + '\n'
+    + 'veXeno: ' + veXeno.address + '\n'
     + 'voter: ' + voter.address + '\n'
     + 'minter: ' + minter.address + '\n'
 
   console.log(data);
 
   if (hre.network.name === "hardhat") {
-    await check(signer, minter.address, token.address, veDist.address, voter.address);
+    await check(signer, minter.address, token.address, veXeno.address, voter.address);
   }
 
 
@@ -110,7 +110,7 @@ async function main() {
     await Verify.verify(gaugesFactory.address);
     await Verify.verify(bribesFactory.address);
     await Verify.verifyWithArgs(ve.address, [token.address, controller.address]);
-    await Verify.verifyWithArgs(veDist.address, [ve.address]);
+    await Verify.verifyWithArgs(veXeno.address, [ve.address]);
     await Verify.verifyWithArgs(voter.address, [ve.address, FACTORY, gaugesFactory.address, bribesFactory.address]);
     await Verify.verifyWithArgs(minter.address, [ve.address, controller.address]);
   }
@@ -123,10 +123,10 @@ main()
     process.exit(1);
   });
 
-async function check(signer: SignerWithAddress, minter: string, token: string, veDist: string, voter: string) {
-  const minterCtr = ConeMinter__factory.connect(minter, signer);
+async function check(signer: SignerWithAddress, minter: string, token: string, veXeno: string, voter: string) {
+  const minterCtr = XenoMinter__factory.connect(minter, signer);
   const tokenCtr = IERC20__factory.connect(token, signer);
-  const voterCtr = ConeVoter__factory.connect(voter, signer);
+  const voterCtr = XenoVoter__factory.connect(voter, signer);
 
   console.log("govBal after deploy", formatUnits(await tokenCtr.balanceOf(signer.address)));
 
@@ -148,7 +148,7 @@ async function check(signer: SignerWithAddress, minter: string, token: string, v
     await minterCtr.updatePeriod();
 
     console.log("govBal", formatUnits(await tokenCtr.balanceOf(signer.address)));
-    console.log("veDistBal", formatUnits(await tokenCtr.balanceOf(veDist)));
+    console.log("veXenoBal", formatUnits(await tokenCtr.balanceOf(veXeno)));
     console.log("voterBal", formatUnits(await tokenCtr.balanceOf(voter)));
   }
 }

@@ -1,9 +1,9 @@
 import {ethers} from "hardhat";
 import {
-  ConeFactory__factory,
-  ConePair,
-  ConePair__factory,
-  ConeRouter01__factory,
+  XenoFactory__factory,
+  XenoPair,
+  XenoPair__factory,
+  XenoRouter01__factory,
   IERC20__factory
 } from '../../typechain';
 import {TestHelper} from '../../test/TestHelper';
@@ -21,8 +21,8 @@ async function main() {
   const routerAdr = '0xbf1fc29668e5f5Eaa819948599c9Ac1B1E03E75F';
 
 
-  const router = ConeRouter01__factory.connect(routerAdr, signer);
-  const factory = ConeFactory__factory.connect(factoryAdr, signer);
+  const router = XenoRouter01__factory.connect(routerAdr, signer);
+  const factory = XenoFactory__factory.connect(factoryAdr, signer);
 
   // ***
 
@@ -52,8 +52,8 @@ async function main() {
     false
   );
 
-  console.log(formatUnits(await ConePair__factory.connect('0x89B26AF36fA8705A27934fcED56D154BDA01315a', signer).reserve0()));
-  console.log(formatUnits(await ConePair__factory.connect('0x89B26AF36fA8705A27934fcED56D154BDA01315a', signer).reserve1()));
+  console.log(formatUnits(await XenoPair__factory.connect('0x89B26AF36fA8705A27934fcED56D154BDA01315a', signer).reserve0()));
+  console.log(formatUnits(await XenoPair__factory.connect('0x89B26AF36fA8705A27934fcED56D154BDA01315a', signer).reserve1()));
 
 }
 

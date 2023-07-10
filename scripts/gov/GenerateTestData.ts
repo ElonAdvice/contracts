@@ -1,8 +1,8 @@
 import {ethers} from "hardhat";
 import {
-  ConeFactory__factory, ConeMinter, ConeMinter__factory,
-  ConeRouter01__factory,
-  ConeVoter, ConeVoter__factory,
+  XenoFactory__factory, XenoMinter, XenoMinter__factory,
+  XenoRouter01__factory,
+  XenoVoter, XenoVoter__factory,
   IFactory__factory,
   IRouter__factory, IWMATIC, IWMATIC__factory,
   Token__factory
@@ -21,7 +21,7 @@ async function main() {
   const factoryAdr = '0x422282F18CFE573e7dc6BEcC7242ffad43340aF8';
   const routerAdr = '0x13d862a01d0AB241509A2e47e31d0db04e9b9F49';
   const veAdr = '0xbEB411eAD71713E7f2814326498Ff2a054242206';
-  const veDistAdr = '0xa4EB2E1284D9E30fb656Fe6b34c1680Ef5d4cBFC';
+  const veXenoAdr = '0xa4EB2E1284D9E30fb656Fe6b34c1680Ef5d4cBFC';
   const voterAdr = '0xC9d5917A0cb82450Cd687AF31eCAaC967D7F121C';
   const minterAdr = '0x0C6868831c504Fb0bB61A54FEfC6464804380508';
 
@@ -31,10 +31,10 @@ async function main() {
   const usdt = BscTestnetAddresses.USDT_TOKEN;
   const mai = BscTestnetAddresses.MAI_TOKEN;
 
-  const router = ConeRouter01__factory.connect(routerAdr, signer);
-  const factory = ConeFactory__factory.connect(factoryAdr, signer);
-  const voter = ConeVoter__factory.connect(voterAdr, signer);
-  const minter = ConeMinter__factory.connect(minterAdr, signer);
+  const router = XenoRouter01__factory.connect(routerAdr, signer);
+  const factory = XenoFactory__factory.connect(factoryAdr, signer);
+  const voter = XenoVoter__factory.connect(voterAdr, signer);
+  const minter = XenoMinter__factory.connect(minterAdr, signer);
 
   // *** MINT tokens
   console.log("start mint tokens")

@@ -1,7 +1,7 @@
 /* tslint:disable:variable-name no-shadowed-variable ban-types no-var-requires no-any */
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { network } from "hardhat";
-import {Controller, Cone, ConeMinter, Token, Ve, VeDist } from "../../typechain";
+import {Controller, Xeno, XenoMinter, Token, Ve, VeXeno } from "../../typechain";
 import {Deploy} from "../../scripts/deploy/Deploy";
 
 const { expect } = require("chai");
@@ -26,28 +26,28 @@ const { ethers } = require("hardhat");
 describe("minter old tests", function () {
 
   let token;
-  let ve_underlying:Cone;
+  let ve_underlying:Xeno;
   let ve:Ve;
   let owner:SignerWithAddress;
-  let minter:ConeMinter;
-  let ve_dist:VeDist;
+  let minter:XenoMinter;
+  let ve_Xeno:VeXeno;
 
   it("deploy base", async function () {
     [owner] = await ethers.getSigners(0);
     token = await ethers.getContractFactory("Token");
-    const Cone = await ethers.getContractFactory("Cone");
+    const Xeno = await ethers.getContractFactory("Xeno");
     const controllerCtr = await ethers.getContractFactory("Controller");
     const controller = await controllerCtr.deploy() as Controller;
     const mim = await token.deploy('MIM', 'MIM', 18, owner.address);
     await mim.mint(owner.address, ethers.BigNumber.from("1000000000000000000000000000000"));
-    ve_underlying = await Cone.deploy();
+    ve_underlying = await Xeno.deploy();
     ve = await Deploy.deployVe(owner, ve_underlying.address, controller.address)
     await ve_underlying.mint(owner.address, ethers.BigNumber.from("10000000000000000000000000"));
-    const ConeFactory = await ethers.getContractFactory("ConeFactory");
-    const factory = await ConeFactory.deploy();
+    const XenoFactory = await ethers.getContractFactory("XenoFactory");
+    const factory = await XenoFactory.deploy();
     await factory.deployed();
-    const ConeRouter01 = await ethers.getContractFactory("ConeRouter01");
-    const router = await ConeRouter01.deploy(factory.address, owner.address);
+    const XenoRouter01 = await ethers.getContractFactory("XenoRouter01");
+    const router = await XenoRouter01.deploy(factory.address, owner.address);
     await router.deployed();
     const GaugeFactory = await ethers.getContractFactory("GaugeFactory");
     const gauges_factory = await GaugeFactory.deploy();
@@ -55,24 +55,24 @@ describe("minter old tests", function () {
     const BribeFactory = await ethers.getContractFactory("BribeFactory");
     const bribe_factory = await BribeFactory.deploy();
     await bribe_factory.deployed();
-    const ConeVoter = await ethers.getContractFactory("ConeVoter");
-    const voter = await ConeVoter.deploy(ve.address, factory.address, gauges_factory.address, bribe_factory.address);
+    const XenoVoter = await ethers.getContractFactory("XenoVoter");
+    const voter = await XenoVoter.deploy(ve.address, factory.address, gauges_factory.address, bribe_factory.address);
     await voter.deployed();
 
     await voter.initialize([mim.address, ve_underlying.address],owner.address);
     await ve_underlying.approve(ve.address, ethers.BigNumber.from("1000000000000000000"));
     await ve.createLock(ethers.BigNumber.from("1000000000000000000"), 4 * 365 * 86400);
-    const VeDist = await ethers.getContractFactory("VeDist");
-    ve_dist = await VeDist.deploy(ve.address);
-    await ve_dist.deployed();
+    const VeXeno = await ethers.getContractFactory("VeXeno");
+    ve_Xeno = await VeXeno.deploy(ve.address);
+    await ve_Xeno.deployed();
 
-    await controller.setVeDist(ve_dist.address)
+    await controller.setVeXeno(ve_Xeno.address)
     await controller.setVoter(voter.address)
 
-    const Minter = await ethers.getContractFactory("ConeMinter");
+    const Minter = await ethers.getContractFactory("XenoMinter");
     minter = await Minter.deploy(ve.address, controller.address);
     await minter.deployed();
-    await ve_dist.setDepositor(minter.address);
+    await ve_Xeno.setDepositor(minter.address);
     await ve_underlying.setMinter(minter.address);
 
     const mim_1 = ethers.BigNumber.from("1000000000000000000");
@@ -105,19 +105,19 @@ describe("minter old tests", function () {
     await network.provider.send("evm_increaseTime", [86400 * 7])
     await network.provider.send("evm_mine")
     await minter.updatePeriod();
-    expect(await ve_dist.claimable(1)).to.equal(0);
+    expect(await ve_Xeno.claimable(1)).to.equal(0);
     expect(await minter.baseWeeklyEmission()).to.equal(ethers.BigNumber.from("20000000000000000000000000"));
     await network.provider.send("evm_increaseTime", [86400 * 7])
     await network.provider.send("evm_mine")
     await minter.updatePeriod();
-    const claimable = await ve_dist.claimable(1);
+    const claimable = await ve_Xeno.claimable(1);
     console.log(claimable)
     expect(claimable).to.be.above(ethers.BigNumber.from("46017464891488080"));
     const before = await ve.balanceOfNFT(1);
-    await ve_dist.claim(1);
+    await ve_Xeno.claim(1);
     const after = await ve.balanceOfNFT(1);
     console.log(before,after)
-    expect(await ve_dist.claimable(1)).to.equal(0);
+    expect(await ve_Xeno.claimable(1)).to.equal(0);
 
     const weekly = await minter.baseWeeklyEmission();
     console.log(weekly);
@@ -128,28 +128,28 @@ describe("minter old tests", function () {
     await network.provider.send("evm_increaseTime", [86400 * 7])
     await network.provider.send("evm_mine")
     await minter.updatePeriod();
-    console.log(await ve_dist.claimable(1));
-    await ve_dist.claim(1);
+    console.log(await ve_Xeno.claimable(1));
+    await ve_Xeno.claim(1);
     await network.provider.send("evm_increaseTime", [86400 * 7])
     await network.provider.send("evm_mine")
     await minter.updatePeriod();
-    console.log(await ve_dist.claimable(1));
-    await ve_dist.claimMany([1]);
+    console.log(await ve_Xeno.claimable(1));
+    await ve_Xeno.claimMany([1]);
     await network.provider.send("evm_increaseTime", [86400 * 7])
     await network.provider.send("evm_mine")
     await minter.updatePeriod();
-    console.log(await ve_dist.claimable(1));
-    await ve_dist.claim(1);
+    console.log(await ve_Xeno.claimable(1));
+    await ve_Xeno.claim(1);
     await network.provider.send("evm_increaseTime", [86400 * 7])
     await network.provider.send("evm_mine")
     await minter.updatePeriod();
-    console.log(await ve_dist.claimable(1));
-    await ve_dist.claimMany([1]);
+    console.log(await ve_Xeno.claimable(1));
+    await ve_Xeno.claimMany([1]);
     await network.provider.send("evm_increaseTime", [86400 * 7])
     await network.provider.send("evm_mine")
     await minter.updatePeriod();
-    console.log(await ve_dist.claimable(1));
-    await ve_dist.claim(1);
+    console.log(await ve_Xeno.claimable(1));
+    await ve_Xeno.claim(1);
   });
 
 });

@@ -1,6 +1,6 @@
 import {
-  ConeMinter__factory,
-  ConePair,
+  XenoMinter__factory,
+  XenoPair,
   Bribe,
   Bribe__factory,
   Gauge,
@@ -41,7 +41,7 @@ describe("emission tests", function () {
   let ust: Token;
   let mim: Token;
   let dai: Token;
-  let mimUstPair: ConePair;
+  let mimUstPair: XenoPair;
 
   let gaugeMimUst: Gauge;
 
@@ -131,27 +131,27 @@ describe("emission tests", function () {
 
   it("early update period should do nothing", async function () {
     expect(await core.token.balanceOf(core.minter.address)).is.eq(0);
-    expect(await core.token.balanceOf(core.veDist.address)).is.eq(0);
+    expect(await core.token.balanceOf(core.veXeno.address)).is.eq(0);
     expect(await core.token.balanceOf(core.voter.address)).is.eq(0);
 
     await core.minter.updatePeriod();
 
     expect(await core.token.balanceOf(core.minter.address)).is.eq(0);
-    expect(await core.token.balanceOf(core.veDist.address)).is.eq(0);
+    expect(await core.token.balanceOf(core.veXeno.address)).is.eq(0);
     expect(await core.token.balanceOf(core.voter.address)).is.eq(0);
   });
 
   it("update period 10 weeks", async function () {
     await TimeUtils.advanceBlocksOnTs(WEEK * 10);
     expect(await core.token.balanceOf(core.minter.address)).is.eq(0);
-    expect(await core.token.balanceOf(core.veDist.address)).is.eq(0);
+    expect(await core.token.balanceOf(core.veXeno.address)).is.eq(0);
     expect(await core.token.balanceOf(core.voter.address)).is.eq(0);
 
     await core.minter.updatePeriod();
 
     expect(await core.token.balanceOf(core.minter.address)).is.eq(0);
-    // not exact amount coz veCONE balance fluctuation during time
-    TestHelper.closer(await core.token.balanceOf(core.veDist.address), parseUnits('900000'), parseUnits('50000'));
+    // not exact amount coz veXENO balance fluctuation during time
+    TestHelper.closer(await core.token.balanceOf(core.veXeno.address), parseUnits('900000'), parseUnits('50000'));
     TestHelper.closer(await core.token.balanceOf(core.voter.address), parseUnits('2000000'), parseUnits('100000'));
   });
 
@@ -159,18 +159,18 @@ describe("emission tests", function () {
     const govAdr = gov.address;
     await TimeUtils.advanceBlocksOnTs(WEEK * 2);
     expect(await core.token.balanceOf(core.minter.address)).is.eq(0);
-    expect(await core.token.balanceOf(core.veDist.address)).is.eq(0);
+    expect(await core.token.balanceOf(core.veXeno.address)).is.eq(0);
     expect(await core.token.balanceOf(core.voter.address)).is.eq(0);
     expect(await core.token.balanceOf(govAdr)).is.eq(0);
 
     await core.minter.updatePeriod();
 
     expect(await core.token.balanceOf(core.minter.address)).is.eq(0);
-    // not exact amount coz veCONE balance fluctuation during time
-    const veDistBal = await core.token.balanceOf(core.veDist.address);
+    // not exact amount coz veXENO balance fluctuation during time
+    const veXenoBal = await core.token.balanceOf(core.veXeno.address);
     const voterBal = await core.token.balanceOf(core.voter.address);
     const govBal = await core.token.balanceOf(govAdr);
-    TestHelper.closer(veDistBal, parseUnits('895000'), parseUnits('10000'));
+    TestHelper.closer(veXenoBal, parseUnits('895000'), parseUnits('10000'));
     TestHelper.closer(voterBal, parseUnits('1904761'), parseUnits('10'));
     TestHelper.closer(govBal, parseUnits('140000'), parseUnits('5000'));
 
@@ -179,44 +179,44 @@ describe("emission tests", function () {
     await core.minter.updatePeriod();
 
     expect(await core.token.balanceOf(core.minter.address)).is.eq(0);
-    // not exact amount coz veCONE balance fluctuation during time
-    TestHelper.closer((await core.token.balanceOf(core.veDist.address)).sub(veDistBal), parseUnits('455'), parseUnits('50'));
+    // not exact amount coz veXENO balance fluctuation during time
+    TestHelper.closer((await core.token.balanceOf(core.veXeno.address)).sub(veXenoBal), parseUnits('455'), parseUnits('50'));
     TestHelper.closer((await core.token.balanceOf(core.voter.address)).sub(voterBal), parseUnits('13500000'), parseUnits('1000000'));
     TestHelper.closer((await core.token.balanceOf(govAdr)).sub(govBal), parseUnits('680000'), parseUnits('5000'));
   });
 
-  it("update period and distribute reward to voter and veDist", async function () {
+  it("update period and distribute reward to voter and veXeno", async function () {
     await TimeUtils.advanceBlocksOnTs(WEEK * 2);
     // should be empty before the first update
     expect(await core.token.balanceOf(core.minter.address)).is.eq(0);
-    expect(await core.token.balanceOf(core.veDist.address)).is.eq(0);
+    expect(await core.token.balanceOf(core.veXeno.address)).is.eq(0);
     expect(await core.token.balanceOf(core.voter.address)).is.eq(0);
 
     await core.minter.updatePeriod();
 
-    // minter without enough token should distribute everything to veDist and voter
+    // minter without enough token should distribute everything to veXeno and voter
     expect(await core.token.balanceOf(core.minter.address)).is.eq(0);
-    // not exact amount coz veCONE balance fluctuation during time
-    TestHelper.closer(await core.token.balanceOf(core.veDist.address), parseUnits('895000'), parseUnits('10000'));
+    // not exact amount coz veXENO balance fluctuation during time
+    TestHelper.closer(await core.token.balanceOf(core.veXeno.address), parseUnits('895000'), parseUnits('10000'));
     TestHelper.closer(await core.token.balanceOf(core.voter.address), parseUnits('1904000'), parseUnits('10000'));
 
     // ------------ CHECK CLAIM VE ----------
 
-    const toClaim = await core.veDist.claimable(1);
+    const toClaim = await core.veXeno.claimable(1);
     expect(toClaim).is.above(parseUnits('30000'));
     await core.token.transfer(core.token.address, await core.token.balanceOf(owner.address))
-    expect(await core.token.balanceOf(owner.address)).is.eq(0, "before the first update we should have 0 Cone");
+    expect(await core.token.balanceOf(owner.address)).is.eq(0, "before the first update we should have 0 XENO");
     const veBalance = (await core.ve.locked(1)).amount;
 
-    await core.veDist.claim(1);
+    await core.veXeno.claim(1);
 
-    // claimed CONE will be deposited to veCONE
+    // claimed XENO will be deposited to veXENO
     TestHelper.closer((await core.ve.locked(1)).amount, toClaim.add(veBalance), parseUnits('10000'));
 
     // ----------- CHECK CLAIM GAUGE ----------
     expect(await core.token.balanceOf(gaugeMimUst.address)).is.eq(0);
 
-    // distribute CONE to all gauges
+    // distribute XENO to all gauges
     await core.voter.distributeAll();
 
     // voter has some dust after distribution
@@ -298,12 +298,12 @@ async function emissionLoop(
     const tx = await gauge.getReward(owner.address, [core.token.address]);
     const receipt = await tx.wait(1);
     // tslint:disable-next-line
-    const log = receipt.events?.find((l: any) => l.topics[0] === ConeMinter__factory.createInterface().getEventTopic('Mint'));
+    const log = receipt.events?.find((l: any) => l.topics[0] === XenoMinter__factory.createInterface().getEventTopic('Mint'));
     let weekly = '-1';
     let growth = '-1';
     if (log) {
-      weekly = formatUnits(ConeMinter__factory.createInterface().parseLog(log).args[1]);
-      growth = formatUnits(ConeMinter__factory.createInterface().parseLog(log).args[2]);
+      weekly = formatUnits(XenoMinter__factory.createInterface().parseLog(log).args[1]);
+      growth = formatUnits(XenoMinter__factory.createInterface().parseLog(log).args[2]);
     }
 
     const tokenBalance = await core.token.balanceOf(owner.address);

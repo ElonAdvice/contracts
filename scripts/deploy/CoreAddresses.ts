@@ -1,37 +1,37 @@
 import {
   BribeFactory,
-  Cone,
-  ConeFactory,
-  ConeMinter,
-  ConeRouter01,
-  ConeVoter, Controller,
+  Xeno,
+  XenoFactory,
+  XenoMinter,
+  XenoRouter01,
+  XenoVoter, Controller,
   GaugeFactory,
   Ve,
-  VeDist
+  VeXeno
 } from "../../typechain";
 
 export class CoreAddresses {
 
-  readonly token: Cone;
+  readonly token: Xeno;
   readonly gaugesFactory: GaugeFactory;
   readonly bribesFactory: BribeFactory;
-  readonly factory: ConeFactory;
-  readonly router: ConeRouter01;
+  readonly factory: XenoFactory;
+  readonly router: XenoRouter01;
   readonly ve: Ve;
-  readonly veDist: VeDist;
-  readonly voter: ConeVoter;
-  readonly minter: ConeMinter;
+  readonly veXeno: VeXeno;
+  readonly voter: XenoVoter;
+  readonly minter: XenoMinter;
   readonly controller: Controller;
 
 
-  constructor(token: Cone, gaugesFactory: GaugeFactory, bribesFactory: BribeFactory, factory: ConeFactory, router: ConeRouter01, ve: Ve, veDist: VeDist, voter: ConeVoter, minter: ConeMinter, controller: Controller) {
+  constructor(token: Xeno, gaugesFactory: GaugeFactory, bribesFactory: BribeFactory, factory: XenoFactory, router: XenoRouter01, ve: Ve, veXeno: VeXeno, voter: XenoVoter, minter: XenoMinter, controller: Controller) {
     this.token = token;
     this.gaugesFactory = gaugesFactory;
     this.bribesFactory = bribesFactory;
     this.factory = factory;
     this.router = router;
     this.ve = ve;
-    this.veDist = veDist;
+    this.veXeno = veXeno;
     this.voter = voter;
     this.minter = minter;
     this.controller = controller;

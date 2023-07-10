@@ -38,10 +38,10 @@ async function main() {
     gaugesFactory,
     bribesFactory,
     ve,
-    veDist,
+    veXeno,
     voter,
     minter,
-  ] = await Deploy.deployConeSystem(
+  ] = await Deploy.deployXenoSystem(
     signer,
     voterTokens,
     claimants,
@@ -57,7 +57,7 @@ async function main() {
     + 'gaugesFactory: ' + gaugesFactory.address + '\n'
     + 'bribesFactory: ' + bribesFactory.address + '\n'
     + 've: ' + ve.address + '\n'
-    + 'veDist: ' + veDist.address + '\n'
+    + 'veXeno: ' + veXeno.address + '\n'
     + 'voter: ' + voter.address + '\n'
     + 'minter: ' + minter.address + '\n'
 
@@ -71,7 +71,7 @@ async function main() {
   await Verify.verify(gaugesFactory.address);
   await Verify.verify(bribesFactory.address);
   await Verify.verifyWithArgs(ve.address, [token.address, controller.address]);
-  await Verify.verifyWithArgs(veDist.address, [ve.address]);
+  await Verify.verifyWithArgs(veXeno.address, [ve.address]);
   await Verify.verifyWithArgs(voter.address, [ve.address, FACTORY, gaugesFactory.address, bribesFactory.address]);
   await Verify.verifyWithArgs(minter.address, [ve.address, controller.address, WARMING]);
 

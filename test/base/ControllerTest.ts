@@ -45,9 +45,9 @@ describe("controller tests", function () {
     expect(await controller.governance()).eq(owner2.address);
   });
 
-  it("setVeDist test", async function () {
-    await controller.setVeDist(owner2.address);
-    expect(await controller.veDist()).eq(owner2.address);
+  it("setVeXeno test", async function () {
+    await controller.setVeXeno(owner2.address);
+    expect(await controller.veXeno()).eq(owner2.address);
   });
 
   it("setVoter test", async function () {

@@ -54,7 +54,7 @@ async function main() {
     + 'factory: ' + core.factory.address + '\n'
     + 'router: ' + core.router.address + '\n'
     + 've: ' + core.ve.address + '\n'
-    + 'veDist: ' + core.veDist.address + '\n'
+    + 'veXeno: ' + core.veXeno.address + '\n'
     + 'voter: ' + core.voter.address + '\n'
     + 'minter: ' + core.minter.address + '\n'
     + 'controller: ' + core.controller.address + '\n'
@@ -70,7 +70,7 @@ async function main() {
   await Verify.verify(core.factory.address);
   await Verify.verifyWithArgs(core.router.address, [core.factory.address, BscTestnetAddresses.WBNB_TOKEN]);
   await Verify.verifyWithArgs(core.ve.address, [core.token.address]);
-  await Verify.verifyWithArgs(core.veDist.address, [core.ve.address]);
+  await Verify.verifyWithArgs(core.veXeno.address, [core.ve.address]);
   await Verify.verifyWithArgs(core.voter.address, [core.ve.address, core.factory.address, core.gaugesFactory.address, core.bribesFactory.address]);
   await Verify.verifyWithArgs(core.minter.address, [core.ve.address, core.controller.address]);
 

@@ -6,16 +6,16 @@ import {BigNumber, ContractFactory, utils} from "ethers";
 import {Libraries} from "hardhat-deploy/dist/types";
 import {
   BribeFactory,
-  Cone,
-  ConeFactory,
-  ConeMinter,
-  ConeRouter01,
-  ConeVoter,
+  Xeno,
+  XenoFactory,
+  XenoMinter,
+  XenoRouter01,
+  XenoVoter,
   Controller,
   GaugeFactory,
   Token,
   Ve,
-  VeDist
+  VeXeno
 } from "../../typechain";
 import {Misc} from "../Misc";
 import {CoreAddresses} from "./CoreAddresses";
@@ -70,8 +70,8 @@ export class Deploy {
     return _factory.attach(receipt.contractAddress);
   }
 
-  public static async deployCone(signer: SignerWithAddress) {
-    return (await Deploy.deployContract(signer, 'Cone')) as Cone;
+  public static async deployXeno(signer: SignerWithAddress) {
+    return (await Deploy.deployContract(signer, 'Xeno')) as Xeno;
   }
 
   public static async deployToken(signer: SignerWithAddress, name: string, symbol: string, decimal: number) {
@@ -86,27 +86,27 @@ export class Deploy {
     return (await Deploy.deployContract(signer, 'BribeFactory')) as BribeFactory;
   }
 
-  public static async deployConeFactory(signer: SignerWithAddress) {
-    return (await Deploy.deployContract(signer, 'ConeFactory')) as ConeFactory;
+  public static async deployXenoFactory(signer: SignerWithAddress) {
+    return (await Deploy.deployContract(signer, 'XenoFactory')) as XenoFactory;
   }
 
-  public static async deployConeRouter01(
+  public static async deployXenoRouter01(
     signer: SignerWithAddress,
     factory: string,
     networkToken: string,
   ) {
-    return (await Deploy.deployContract(signer, 'ConeRouter01', factory, networkToken)) as ConeRouter01;
+    return (await Deploy.deployContract(signer, 'XenoRouter01', factory, networkToken)) as XenoRouter01;
   }
 
   public static async deployVe(signer: SignerWithAddress, token: string, controller: string) {
     return (await Deploy.deployContract(signer, 'Ve', token, controller)) as Ve;
   }
 
-  public static async deployVeDist(signer: SignerWithAddress, ve: string) {
-    return (await Deploy.deployContract(signer, 'VeDist', ve)) as VeDist;
+  public static async deployVeXeno(signer: SignerWithAddress, ve: string) {
+    return (await Deploy.deployContract(signer, 'VeXeno', ve)) as VeXeno;
   }
 
-  public static async deployConeVoter(
+  public static async deployXenoVoter(
     signer: SignerWithAddress,
     ve: string,
     factory: string,
@@ -115,25 +115,25 @@ export class Deploy {
   ) {
     return (await Deploy.deployContract(
       signer,
-      'ConeVoter',
+      'XenoVoter',
       ve,
       factory,
       gauges,
       bribes,
-    )) as ConeVoter;
+    )) as XenoVoter;
   }
 
-  public static async deployConeMinter(
+  public static async deployXenoMinter(
     signer: SignerWithAddress,
     ve: string,
     controller: string,
   ) {
     return (await Deploy.deployContract(
       signer,
-      'ConeMinter',
+      'XenoMinter',
       ve,
       controller
-    )) as ConeMinter;
+    )) as XenoMinter;
   }
 
   public static async deployCore(
@@ -153,10 +153,10 @@ export class Deploy {
       gaugesFactory,
       bribesFactory,
       ve,
-      veDist,
+      veXeno,
       voter,
       minter,
-    ] = await Deploy.deployConeSystem(
+    ] = await Deploy.deployXenoSystem(
       signer,
       voterTokens,
       minterClaimants,
@@ -167,15 +167,15 @@ export class Deploy {
     );
 
     return new CoreAddresses(
-      token as Cone,
+      token as Xeno,
       gaugesFactory as GaugeFactory,
       bribesFactory as BribeFactory,
-      baseFactory as ConeFactory,
-      router as ConeRouter01,
+      baseFactory as XenoFactory,
+      router as XenoRouter01,
       ve as Ve,
-      veDist as VeDist,
-      voter as ConeVoter,
-      minter as ConeMinter,
+      veXeno as VeXeno,
+      voter as XenoVoter,
+      minter as XenoMinter,
       controller as Controller,
     );
   }
@@ -185,13 +185,13 @@ export class Deploy {
     signer: SignerWithAddress,
     networkToken: string,
   ) {
-    const baseFactory = await Deploy.deployConeFactory(signer);
-    const router = await Deploy.deployConeRouter01(signer, baseFactory.address, networkToken);
+    const baseFactory = await Deploy.deployXenoFactory(signer);
+    const router = await Deploy.deployXenoRouter01(signer, baseFactory.address, networkToken);
 
     return [baseFactory, router];
   }
 
-  public static async deployConeSystem(
+  public static async deployXenoSystem(
     signer: SignerWithAddress,
     voterTokens: string[],
     minterClaimants: string[],
@@ -202,7 +202,7 @@ export class Deploy {
   ) {
     const controller = await Deploy.deployContract(signer, 'Controller') as Controller;
     await Misc.delay(10_000);
-    const token = await Deploy.deployCone(signer);
+    const token = await Deploy.deployXeno(signer);
     await Misc.delay(10_000);
     const ve = await Deploy.deployVe(signer, token.address, controller.address);
     await Misc.delay(10_000);
@@ -212,16 +212,16 @@ export class Deploy {
     await Misc.delay(10_000);
 
 
-    const veDist = await Deploy.deployVeDist(signer, ve.address);
+    const veXeno = await Deploy.deployVeXeno(signer, ve.address);
     await Misc.delay(10_000);
-    const voter = await Deploy.deployConeVoter(signer, ve.address, baseFactory, gaugesFactory.address, bribesFactory.address);
+    const voter = await Deploy.deployXenoVoter(signer, ve.address, baseFactory, gaugesFactory.address, bribesFactory.address);
     await Misc.delay(10_000);
-    const minter = await Deploy.deployConeMinter(signer, ve.address, controller.address);
+    const minter = await Deploy.deployXenoMinter(signer, ve.address, controller.address);
     await Misc.delay(10_000);
 
     await Misc.runAndWait(() => token.setMinter(minter.address));
-    await Misc.runAndWait(() => veDist.setDepositor(minter.address));
-    await Misc.runAndWait(() => controller.setVeDist(veDist.address));
+    await Misc.runAndWait(() => veXeno.setDepositor(minter.address));
+    await Misc.runAndWait(() => controller.setVeXeno(veXeno.address));
     await Misc.runAndWait(() => controller.setVoter(voter.address));
 
     await Misc.runAndWait(() => voter.initialize(voterTokens, minter.address));
@@ -238,7 +238,7 @@ export class Deploy {
       gaugesFactory,
       bribesFactory,
       ve,
-      veDist,
+      veXeno,
       voter,
       minter,
     ];

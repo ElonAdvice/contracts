@@ -5,7 +5,7 @@ import {Deploy} from "../../../scripts/deploy/Deploy";
 import {TimeUtils} from "../../TimeUtils";
 import {BigNumber, utils} from "ethers";
 import {CoreAddresses} from "../../../scripts/deploy/CoreAddresses";
-import {ConePair, Controller, Token} from "../../../typechain";
+import {XenoPair, Controller, Token} from "../../../typechain";
 import {TestHelper} from "../../TestHelper";
 import {parseUnits} from "ethers/lib/utils";
 import {Misc} from "../../../scripts/Misc";
@@ -24,7 +24,7 @@ describe("minter tests", function () {
   let ust: Token;
   let mim: Token;
   let dai: Token;
-  let pair: ConePair;
+  let pair: XenoPair;
   // let gauge: Gauge;
 
 
@@ -99,14 +99,14 @@ describe("minter tests", function () {
     const controller = await Deploy.deployContract(owner, 'Controller') as Controller;
     const gaugesFactory = await Deploy.deployGaugeFactory(owner);
     const bribesFactory = await Deploy.deployBribeFactory(owner);
-    const baseFactory = await Deploy.deployConeFactory(owner);
+    const baseFactory = await Deploy.deployXenoFactory(owner);
     const token = await Deploy.deployContract(owner, 'Token', 'VE', 'VE', 18, owner.address) as Token;
     const ve = await Deploy.deployVe(owner, token.address, controller.address);
-    const veDist = await Deploy.deployVeDist(owner, ve.address);
-    const voter = await Deploy.deployConeVoter(owner, ve.address, baseFactory.address, gaugesFactory.address, bribesFactory.address);
-    await controller.setVeDist(veDist.address)
+    const veXeno = await Deploy.deployVeXeno(owner, ve.address);
+    const voter = await Deploy.deployXenoVoter(owner, ve.address, baseFactory.address, gaugesFactory.address, bribesFactory.address);
+    await controller.setVeXeno(veXeno.address)
     await controller.setVoter(voter.address)
-    const minter = await Deploy.deployConeMinter(owner, ve.address, controller.address);
+    const minter = await Deploy.deployXenoMinter(owner, ve.address, controller.address);
     console.log((await minter.activePeriod()).toString());
     await expect(minter.initialize([owner.address], [1], 2, 1)).revertedWith('Wrong totalAmount')
   });
