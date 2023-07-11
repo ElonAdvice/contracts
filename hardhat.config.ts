@@ -57,7 +57,7 @@ const argv = require('yargs/yargs')()
 
 
 export default {
-  defaultNetwork: "hardhat",
+  defaultNetwork: "goerli",
   networks: {
     hardhat: {
       allowUnlimitedContractSize: true,
@@ -110,7 +110,8 @@ export default {
     apiKey: {
       bsc: argv.networkScanKey,
       bscTestnet: argv.networkScanKey,
-      avalancheFujiTestnet: argv.networkScanKeyFuji
+      avalancheFujiTestnet: argv.networkScanKeyFuji,
+      goerli: process.env.NETWORK_SCAN_KEY,
     },
     customChains: []
   },

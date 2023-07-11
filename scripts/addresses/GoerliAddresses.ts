@@ -2,17 +2,17 @@
 
 // noinspection JSUnusedGlobalSymbols
 
-export class FujiAddresses {
+export class GoerliAddresses {
 
   public static ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
   // tokens
-  public static WBNB_TOKEN = "0xd00ae08403B9bbb9124bB305C09058E32C39A48c".toLowerCase(); // wavax
-  public static USDC_TOKEN = "0x9277F644CbAC7b678a1a353Af622Fc63760d3a2e".toLowerCase();
-  public static MIM_TOKEN = "0xa61962C91ee2278a1dFA3a96B02C4769E40D0eDB".toLowerCase();
-  public static DAI_TOKEN = "0x23AB65AFA9236473e9dA80Ed4066cB8744279381".toLowerCase();
-  public static USDT_TOKEN = "0xF9E0A1A75bF7A7D9e42CBf3FE20967C090d27DA8".toLowerCase();
-  public static MAI_TOKEN = "0xafcFE7fAFaAC9Db0767cEc188f744480FAEAf4D8".toLowerCase();
+  public static WBNB_TOKEN = "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6".toLowerCase(); // wavax
+  public static USDC_TOKEN = "0x555B5eb57137a3774e9D32994dee34811D149889".toLowerCase();
+  public static MIM_TOKEN = "0x85D2a314f8ac49004FDaDD9E877843c4F6cBE2E6".toLowerCase();
+  public static DAI_TOKEN = "0xA694E1211aD2A392A9c0f663F1B8AAA590cC34B4".toLowerCase();
+  public static USDT_TOKEN = "0x4632153D050099be61d4417a1F44Df52b3593089".toLowerCase();
+  public static MAI_TOKEN = "0xBaED5D70F5703411F1b41040182265383a9c9ada".toLowerCase();
 
 }
 

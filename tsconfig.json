@@ -16,6 +16,6 @@
   ],
   "files": [
     "./hardhat.config.ts",
-    "./scripts/addresses/FujiAddresses.ts/"
+    "./scripts/addresses/GoerliAddresses.ts/"
   ]
 }

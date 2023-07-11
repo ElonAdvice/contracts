@@ -3,28 +3,27 @@ import {ethers} from "hardhat";
 import {Verify} from "../../Verify";
 import {Misc} from "../../Misc";
 import {BigNumber} from "ethers";
-import {BscTestnetAddresses} from "../../addresses/BscTestnetAddresses";
 import {writeFileSync} from "fs";
 import {parseUnits} from 'ethers/lib/utils';
-import {FujiAddresses} from '../../addresses/FujiAddresses';
+import {GoerliAddresses} from '../../addresses/GoerliAddresses';
 
 
 const voterTokens = [
-  BscTestnetAddresses.WBNB_TOKEN,
-  BscTestnetAddresses.USDC_TOKEN,
-  BscTestnetAddresses.MIM_TOKEN,
-  BscTestnetAddresses.DAI_TOKEN,
-  BscTestnetAddresses.USDT_TOKEN,
-  BscTestnetAddresses.MAI_TOKEN,
+  GoerliAddresses.WBNB_TOKEN,
+  GoerliAddresses.USDC_TOKEN,
+  GoerliAddresses.MIM_TOKEN,
+  GoerliAddresses.DAI_TOKEN,
+  GoerliAddresses.USDT_TOKEN,
+  GoerliAddresses.MAI_TOKEN,
 ];
 
 const claimants = [
-  "0xbbbbb8C4364eC2ce52c59D2Ed3E56F307E529a94",
-  "0xbbbbb8C4364eC2ce52c59D2Ed3E56F307E529a94",
-  "0xbbbbb8C4364eC2ce52c59D2Ed3E56F307E529a94",
-  "0xbbbbb8C4364eC2ce52c59D2Ed3E56F307E529a94",
-  "0xbbbbb8C4364eC2ce52c59D2Ed3E56F307E529a94",
-  "0xbbbbb8C4364eC2ce52c59D2Ed3E56F307E529a94",
+  "0x0e7376BB55f355b4a0bce99f0a5e960332f155de",
+  "0x0e7376BB55f355b4a0bce99f0a5e960332f155de",
+  "0x0e7376BB55f355b4a0bce99f0a5e960332f155de",
+  "0x0e7376BB55f355b4a0bce99f0a5e960332f155de",
+  "0x0e7376BB55f355b4a0bce99f0a5e960332f155de",
+  "0x0e7376BB55f355b4a0bce99f0a5e960332f155de",
 ];
 
 const claimantsAmounts = [
@@ -45,7 +44,7 @@ async function main() {
     minterMax = minterMax.add(c);
   }
 
-  const core = await Deploy.deployCore(signer, BscTestnetAddresses.WBNB_TOKEN, voterTokens, claimants, claimantsAmounts, minterMax, 0)
+  const core = await Deploy.deployCore(signer, GoerliAddresses.WBNB_TOKEN, voterTokens, claimants, claimantsAmounts, minterMax, 0)
 
   const data = ''
     + 'token: ' + core.token.address + '\n'
@@ -68,7 +67,7 @@ async function main() {
   await Verify.verify(core.gaugesFactory.address);
   await Verify.verify(core.bribesFactory.address);
   await Verify.verify(core.factory.address);
-  await Verify.verifyWithArgs(core.router.address, [core.factory.address, BscTestnetAddresses.WBNB_TOKEN]);
+  await Verify.verifyWithArgs(core.router.address, [core.factory.address, GoerliAddresses.WBNB_TOKEN]);
   await Verify.verifyWithArgs(core.ve.address, [core.token.address]);
   await Verify.verifyWithArgs(core.veXeno.address, [core.ve.address]);
   await Verify.verifyWithArgs(core.voter.address, [core.ve.address, core.factory.address, core.gaugesFactory.address, core.bribesFactory.address]);
